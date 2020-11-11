@@ -232,7 +232,7 @@ class Header extends Component {
                 <Modal ariaHideApp={false} isOpen={this.state.modalIsOpen} contentLabel="Login" onRequestClose={this.closeModalHandler} style={customModalStyles}>
                     <Tabs className="tabs" value={this.state.value} onChange={this.tabChangeHandler}>
                         <Tab label="Login"></Tab>
-                        <Tab label="Register"></Tab>
+                        <Tab label="SignUp"></Tab>
                     </Tabs>
                     {this.state.value === 0 &&
                         <TabContainer>
