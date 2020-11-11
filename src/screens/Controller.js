@@ -5,7 +5,7 @@ import Home from '../screens/home/Home';
 class Controller extends Component {
     constructor() {
         super();
-        this.baseUrl = "http://localhost:8080/api";
+        this.baseUrl = "localhost:3000";
     }
     render() {
         return (
