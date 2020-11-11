@@ -1,60 +1,53 @@
-/*Common CSS for the Signup and Login Page*/
-.tabs {
-	margin-bottom: 20px;
+.app-header {
+    background-color:darkslategray;
+    height: 36px;
+    padding: 8px 32px 8px 16px;
+    display: grid;
+    grid-template-columns: auto auto auto;
 }
 
-.MuiFormControl-root.login-and-signup-forms {
-	width: 80%;
+.login-button {
+    float: right;
+} 
+
+.fastFoodIcon, .searchIcon{
+    color: white;
 }
+.MuiInput-underline:before {
+    border-bottom: 1px solid black;
+}
+
+.MuiInput-underline:hover:not(.Mui-disabled):before{
+    border-bottom: 1px solid white;
+}
+
+.searchInput {
+    color: white !important;
+}
+.MuiInput-root {
+    width: -webkit-fill-available;
+}
+.tabs {
+    margin-bottom: 20px;
+} 
 
 .dispNone {
-	display: none;
+    display: none;
 }
 
 .dispBlock {
-	display: block;
+    display: block;
 }
 
 .red {
-	color: red;
+    color: red;
 }
-
-#login-error-msg-div {
-	display: flex;
-	font-size: smaller;
-}
-
-#login-error-msg {
-	width: 80%;
-	margin: auto;
-	text-align: left;
-}
-
-#customer-profile {
-	color: white;
-}
-
-#signup-error-msg-div {
-	display: flex;
-	font-size: smaller;
-}
-
-#signup-error-msg {
-	width: 80%;
-	margin: auto;
-	text-align: left;
-}
-
-
-/* For screen size upto 600px */
-
-@media screen and (max-width: 600px) {
-	#login-error-msg-div {
-		font-size: x-small;
-	}
-	#signup-error-msg-div {
-		font-size: x-small;
+@media only screen and (max-width: 420px){
+    .app-header {
+        height: 110px;
+        grid-template-columns: auto;
     }
+    .login-button {
+        float: left;
+    } 
 }
-
-
