@@ -154,7 +154,6 @@ class Header extends Component {
             .then((Result) => {
                 if (Result.status === 'CUSTOMER SUCCESSFULLY REGISTERED')
                     alert('Registered successfully')
-                //this.props.history.push("/Dashboard");  
                 else
                     alert(Result.message);
             }).catch(error => {
