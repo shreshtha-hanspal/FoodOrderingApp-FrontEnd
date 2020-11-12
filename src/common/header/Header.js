@@ -341,7 +341,7 @@ class Header extends Component {
         );
     }
 
-    // clears all the values and required field validation messages and error messages when modal is opened
+    // validation messages and error messages--modal is opened
     openModalHandler = () => {
         this.setState({
             modalIsOpen: true,
@@ -366,12 +366,12 @@ class Header extends Component {
         });
     }
 
-    // closes the modal
+    //  close the modal
     closeModalHandler = () => {
         this.setState({modalIsOpen: false});
     }
 
-    // changes the tabs inside modal
+    // changing the tabs inside modal
     tabChangeHandler = (event, value) => {
         this.setState({value});
     }
@@ -409,7 +409,7 @@ class Header extends Component {
             return;
         }
 
-        //   contact number vaidation
+        //   contact number validation
         const isvalidContactNo = validator.isMobilePhone(this.state.loginContactNo);
         if ((contactNoRequired === false && !isvalidContactNo) || this.state.loginContactNo.length !== 10) {
             this.setState({
