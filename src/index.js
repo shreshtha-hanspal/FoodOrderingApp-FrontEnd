@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import Controller from './Controller';
+import 'typeface-roboto';
+import {BrowserRouter as Router} from "react-router-dom";
 import * as serviceWorker from './serviceWorker';
-//import Controller from './screens/Controller';
- import Home from './screens/home/Home';
 
-
-ReactDOM.render(<Home></Home>, document.getElementById('root'));
+ReactDOM.render(
+    <Router>
+        <Controller />
+    </Router>,
+    document.getElementById('root')
+);
 
 
 // If you want your app to work offline and load faster, you can change

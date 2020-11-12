@@ -8,7 +8,8 @@ class Home extends Component{
     render(){
         return(
             <div>
-                <Header/>
+                            <Header showSearchBox={true}/>
+
             </div> 
         )    
     }
