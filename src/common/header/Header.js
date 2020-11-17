@@ -441,7 +441,247 @@ class Header extends Component {
             openLoginSnackBar: false
         });
     }
+   //  login functionality  backend Integration
+   sendLoginDetails = () => {
+    let loginData = null;
+    let that = this;
+    let xhrLogin = new XMLHttpRequest();
+    xhrLogin.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            let loginResponse = JSON.parse(this.responseText);
+            // displays the login error message
+            if (this.status === 401) {
+                that.setState({
+                    loginErroMessage: loginResponse.message,
+                    loginErroMessageRequired: "dispBlock"
+                });
+            }
+            //successful login which stores uuid, access-token, first-name inside session storage and displays the login snackbar
+            if (this.status === 200) {
+                sessionStorage.setItem("uuid", loginResponse.id);
+                sessionStorage.setItem("access-token", xhrLogin.getResponseHeader("access-token"));
+                sessionStorage.setItem("first-name", loginResponse.first_name)
+                that.setState({
+                    loggedIn: true,
+                    openLoginSnackBar: true
+                });
+                // modal closing after successful login
+                that.closeModalHandler();
+            }
+        }
+    });
+    let url = this.props.baseUrl + 'customer/login';
+    xhrLogin.open("Post", url);
+    xhrLogin.setRequestHeader("Authorization", "Basic " + window.btoa(this.state.loginContactNo + ":" + this.state.loginPassword));
+    xhrLogin.setRequestHeader("Content-Type", "application/json");
+    xhrLogin.setRequestHeader("Cache-Control", "no-cache");
+    xhrLogin.send(loginData);
 }
+
+// signup form validation 
+signupClickHandler = () => {
+
+    this.state.signupFirstname === "" ? this.setState({signupFirstnameRequired: "dispBlock"}) : this.setState({signupFirstnameRequired: "dispNone"});
+
+    let signupEmailRequired = false;
+    if (this.state.signupEmail === "") {
+        this.setState({
+            signupEmailRequiredMessage: "required",
+            signupEmailRequired: "dispBlock"
+        });
+        signupEmailRequired = true;
+    } else {
+        this.setState({signupEmailRequired: "dispNone"});
+    }
+
+    let signupPasswordRequired = false;
+    if (this.state.signupPassword === "") {
+        this.setState({
+            signupPasswordRequiredMessage: "required",
+            signupPasswordRequired: "dispBlock"
+        });
+        signupPasswordRequired = true;
+    } else {
+        this.setState({signupPasswordRequired: "dispNone"});
+    }
+
+    let signupContactNoRequired = false;
+    if (this.state.signupContactNo === "") {
+        this.setState({
+            signupContactNoRequiredMessage: "required",
+            signupContactNoRequired: "dispBlock"
+        });
+        signupContactNoRequired = true;
+    } else {
+        this.setState({signupContactNoRequired: "dispNone"});
+    }
+
+    // checks whether the  email is valid or not
+    const isValidEmail = validator.isEmail(this.state.signupEmail);
+    if (signupEmailRequired === false && !isValidEmail) {
+        this.setState({
+            signupEmailRequiredMessage: "Invalid Email",
+            signupEmailRequired: "dispBlock"
+        });
+        return;
+    }
+
+    //checking the password condition 
+    // {at least one capital letter, one small letter, one number, and one special character}
+    const isValidPassword = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$');
+    if (signupPasswordRequired === false && !isValidPassword.test(this.state.signupPassword)) {
+        this.setState({
+            signupPasswordRequiredMessage: "Password must contain at least one capital letter, one small letter, one number, and one special character",
+            signupPasswordRequired: "dispBlock"
+        });
+        return;
+    }
+
+    if (signupContactNoRequired) {
+        return;
+    }
+
+    // checks whether the contact number is valid or not
+    const isvalidContactNo = validator.isMobilePhone(this.state.signupContactNo);
+    if ((signupContactNoRequired === false && !isvalidContactNo) || this.state.signupContactNo.length !== 10) {
+        this.setState({
+            signupContactNoRequiredMessage: "Contact No. must contain only numbers and must be 10 digits long",
+            signupContactNoRequired: "dispBlock"
+        });
+        return;
+    }
+
+    this.sendSignupDetails();
+}
+
+// calls when the value of the firstname field changes in signup form
+inputSignupFirstNameChangeHandler = (e) => {
+    this.setState({signupFirstname: e.target.value});
+}
+
+// calls when the value of the lastname field changes in signup form
+inputSignupLastNameChangeHandler = (e) => {
+    this.setState({singupLastname: e.target.value});
+}
+
+// calls when the value of the email field changes in signup form
+inputSignupEmailChangeHandler = (e) => {
+    this.setState({signupEmail: e.target.value});
+}
+
+// calls when the value of the password field changes in signup form
+inputSignupPasswordChangeHandler = (e) => {
+    this.setState({signupPassword: e.target.value});
+}
+
+// calls when the value of the contact no field changes in signup form
+inputSignupContactNoChangeHandler = (e) => {
+    this.setState({signupContactNo: e.target.value});
+}
+
+// clears the signup form 
+clearSignupForm = () => {
+    this.setState({
+        signupFirstname: "",
+        signupFirstnameRequired: "dispNone",
+        singupLastname: "",
+        signupEmail: "",
+        signupEmailRequired: "dispNone",
+        signupPassword: "",
+        signupPasswordRequired: "dispNone",
+        signupContactNo: "",
+        signupContactNoRequired: "dispNone",
+        signupErrorMessage: "",
+        signupErrorMessageRequired: "dispNone",
+    });
+}
+
+// closes the signup snackbar
+signupSnackBarCloseHandler = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    this.setState({
+        openSignupSnackBar: false
+    });
+}
+
+//  signup functionality with backend Integration
+sendSignupDetails = () => {
+    let signupData = JSON.stringify({
+        "contact_number": this.state.signupContactNo,
+        "email_address": this.state.signupEmail,
+        "first_name": this.state.signupFirstname,
+        "last_name": this.state.singupLastname,
+        "password": this.state.signupPassword
+    });
+
+    let that = this;
+    let xhrSignup = new XMLHttpRequest();
+    xhrSignup.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            let responseText = JSON.parse(this.responseText);
+            // displays the signup error message
+            if (this.status === 400) {
+                that.setState({
+                    signupErrorMessage: responseText.message,
+                    signupErrorMessageRequired: "dispBlock"
+                });
+            }
+            // after successful signup 
+            //changing the tab  to login tab inside the modal and displays the signup snackbar
+            if (this.status === 201) {
+                that.setState({
+                    value: 0,
+                    openSignupSnackBar: true
+                });
+                that.clearSignupForm();
+            }
+        }
+    });
+    let url = this.props.baseUrl + 'customer/signup'
+    xhrSignup.open("POST", url);
+    xhrSignup.setRequestHeader("Content-Type", "application/json");
+    xhrSignup.setRequestHeader("Cache-Control", "no-cache");
+    xhrSignup.send(signupData);
+}
+
+// function call when customer clicks on profile icon
+onProfileIconClick = (e) => {
+    this.setState({'menuState': !this.state.menuState, 'anchorEl': e.currentTarget});
+}
+
+// closes the menu
+onMenuClose = () => {
+    this.setState({'menuState': !this.state.menuState, 'anchorEl': null});
+}
+
+// redirects to profile page in case whencustomer clicks on My Profile inside the menu
+onMyProfile = () => {
+    this.setState({
+        loggedIn: true
+    });
+}
+
+// when customer clicks on logout inside the menu remove's access-token, uuid, first-name from sessionStorage and redirects to home page and closes the menu
+onLogout = () => {
+    sessionStorage.removeItem('access-token');
+    sessionStorage.removeItem('uuid');
+    sessionStorage.removeItem('first-name');
+    this.setState({
+        loggedIn: false
+    })
+    this.onMenuClose();
+}
+
+}
+
+
+
+
+
+
+
 
 
     export default withStyles(styles)(Header);
