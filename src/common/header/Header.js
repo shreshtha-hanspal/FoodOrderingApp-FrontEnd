@@ -472,9 +472,10 @@ class Header extends Component {
     });
     let url = this.props.baseUrl + 'customer/login';
     xhrLogin.open("Post", url);
-    xhrLogin.setRequestHeader("Authorization", "Basic " + window.btoa(this.state.loginContactNo + ":" + this.state.loginPassword));
+    xhrLogin.setRequestHeader("authorization", "Basic " + window.btoa(this.state.loginContactNo + ":" + this.state.loginPassword));
     xhrLogin.setRequestHeader("Content-Type", "application/json");
     xhrLogin.setRequestHeader("Cache-Control", "no-cache");
+    xhrLogin.setRequestHeader("Access-Control-Allow-Origin", "*");
     xhrLogin.send(loginData);
 }
 
@@ -643,6 +644,7 @@ sendSignupDetails = () => {
     xhrSignup.open("POST", url);
     xhrSignup.setRequestHeader("Content-Type", "application/json");
     xhrSignup.setRequestHeader("Cache-Control", "no-cache");
+    xhrSignup.setRequestHeader("Access-Control-Allow-Origin", "*");
     xhrSignup.send(signupData);
 }
 

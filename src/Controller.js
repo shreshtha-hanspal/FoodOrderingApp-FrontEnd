@@ -14,7 +14,7 @@ class Controller extends Component {
     render() {
         return (
             <Switch>
-                <Route exact path='/' render={(props) => <Home {...props} />} />
+                <Route exact path='/' render={(props) => <Home {...props} baseUrl={this.baseUrl}/>} />
             </Switch>
         )
     }
