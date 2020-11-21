@@ -663,7 +663,7 @@ onMyProfile = () => {
     this.setState({
         loggedIn: true
     });
-    
+    //window.location.href = 'http://localhost:3000/profile';
 }
 
 // when customer clicks on logout inside the menu remove's access-token, uuid, first-name from sessionStorage and redirects to home page and closes the menu

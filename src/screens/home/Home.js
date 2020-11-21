@@ -8,8 +8,7 @@ class Home extends Component{
     render(){
         return(
             <div>
-                            <Header showSearchBox={true} baseUrl={this.props.baseUrl}/>
-
+                <Header showSearchBox={true} baseUrl={this.props.baseUrl}/>
             </div> 
         )    
     }
