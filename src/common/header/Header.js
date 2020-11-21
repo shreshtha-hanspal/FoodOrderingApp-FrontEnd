@@ -68,7 +68,7 @@ const styles = theme => ({
             marginBottom: theme.spacing(1.5),
         },
     },
-    customerProifleBtn: {
+    customerProfileBtn: {
         color: 'white',
         [theme.breakpoints.only('xs')]: {
             marginBottom: theme.spacing(1.5),
@@ -190,8 +190,8 @@ class Header extends Component {
                                         onClick={this.openModalHandler}>Login</Button>
                             </div>
                             :
-                            <div className={classes.customerProifleBtn}>
-                                <Button id="customer-profile" startIcon={<AccountCircle/>}
+                            <div className={classes.customerProfileBtn}>
+                                <Button id="customer-profile" startIcon={<AccountCircle/>} style={{color:'white'}}
                                         onClick={this.onProfileIconClick}>{sessionStorage.getItem("first-name")}</Button>
                                 <Menu id="profile-menu" open={this.state.menuState} onClose={this.onMenuClose}
                                       anchorEl={this.state.anchorEl} getContentAnchorEl={null}
@@ -663,6 +663,7 @@ onMyProfile = () => {
     this.setState({
         loggedIn: true
     });
+    
 }
 
 // when customer clicks on logout inside the menu remove's access-token, uuid, first-name from sessionStorage and redirects to home page and closes the menu
