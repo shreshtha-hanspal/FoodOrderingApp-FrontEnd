@@ -252,19 +252,20 @@ class Details extends Component{
                         </Grid>        
                     </Grid>
                 </div>
-                <div className="menu-cart-section">
-                    <div className='menu'>
-                        <div style={{padding: '3%'}}>
-                            {this.state.categories.map(categoryItem =>
-                                <div key={categoryItem.id}>
-                                    <CategoryItem item={categoryItem} this={this}/>
-                                </div>
-                            )}
+                <div className="category-cart-container">
+                    <div className="menu-cart-section">
+                        <div className='menu'>
+                            <div style={{padding: '3%'}}>
+                                {this.state.categories.map(categoryItem =>
+                                    <div key={categoryItem.id}>
+                                        <CategoryItem item={categoryItem} this={this}/>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* checkout cart code */}
-                <div className="space-for-cart">
+                    {/* checkout cart code */}
+                    <div className="space-for-cart">
                     </div>
                     <div className="cart">
                         <div className="padding-5percent">
@@ -302,6 +303,7 @@ class Details extends Component{
                             </Card>
                         </div>
                     </div>
+                </div>
                     {/* snack bar component to display messages to user */}
                     <Snackbar anchorOrigin={{
                     vertical: 'bottom',
