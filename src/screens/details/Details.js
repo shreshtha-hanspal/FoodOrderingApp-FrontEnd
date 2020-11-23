@@ -75,6 +75,7 @@ class Details extends Component{
         console.log(id);
     };
 
+    //Takes restaurant ID as parameter and stores details of a restaurant fetched-based-on-ID
     getRestaurantDetails = (id) => {
         let res_url = `${this.props.baseUrl}/restaurant/${id}`;
         console.log(res_url)
@@ -109,7 +110,7 @@ class Details extends Component{
         });
     }
 
-    //checkout handler
+    //checkout handler- Handles logic on click of checkout Button
     checkoutHandler = () => {
         if (this.state.cartItems === 0) {
             this.messageBarHandler("Please add an item to your cart!");
@@ -137,7 +138,7 @@ class Details extends Component{
         }
     }
 
-    //Add item to My cart
+    //Add an item to My cart
     addItemHandler = (item) => {
         this.messageBarHandler("Item added to cart!");
         let cartItemsList = this.state.cartItemsList;
@@ -162,7 +163,7 @@ class Details extends Component{
         });
     }
 
-    //Add item count to cart
+    //Increase item count in cart
     increaseItemInCartHandler = (cartItem) => {
         this.messageBarHandler("Item quantity increased by 1!");
         let cartItemsList = this.state.cartItemsList;
@@ -197,7 +198,9 @@ class Details extends Component{
         const {classes} = this.props;
         return(
             <div>
+                {/* Header section */}
                 <Header showSearchBox={false} clickProfileIcon={this.onProfileIconClick} baseUrl={this.props.baseUrl}/>
+                {/* Restaurant details section */}
                 <div className="restaurant-section grey-color-bg">
                     <Grid container direction="row" spacing={0}>
                         <Grid item xs={2}>
@@ -252,6 +255,7 @@ class Details extends Component{
                         </Grid>        
                     </Grid>
                 </div>
+                {/* Details of items based on category in a restaurant */}
                 <div className="category-cart-container">
                     <div className="menu-cart-section">
                         <div className='menu'>
