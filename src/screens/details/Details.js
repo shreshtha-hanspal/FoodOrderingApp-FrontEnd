@@ -264,8 +264,6 @@ class Details extends Component{
                         </div>
                     </div>
                     {/* checkout cart code */}
-                    <div className="space-for-cart">
-                    </div>
                     <div className="cart">
                         <div className="padding-5percent">
                             <Card className="card" >
