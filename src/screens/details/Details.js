@@ -24,6 +24,8 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import CardActions from '@material-ui/core/CardActions';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const styles = theme => ({
@@ -300,6 +302,29 @@ class Details extends Component{
                             </Card>
                         </div>
                     </div>
+                    {/* snack bar component to display messages to user */}
+                    <Snackbar anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                    }}
+                          open={this.state.messagebarOpen}
+                          onClose={(e) => this.messageBarHandler("")}
+                          autoHideDuration={2000}
+                          ContentProps={{
+                              'aria-describedby': 'message-id',
+                          }}
+                          message={<span id="message-id">{this.state.messagebarMessage}</span>}
+                          action={[
+                              <IconButton
+                                  key="close"
+                                  aria-label="Close"
+                                  color="inherit"
+                                  onClick={(e) => this.messageBarHandler("")}
+                              >
+                                  <CloseIcon/>
+                              </IconButton>,
+                          ]}
+                />
             </div>
         )
     }
