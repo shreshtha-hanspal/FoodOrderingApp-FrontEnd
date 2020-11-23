@@ -3,14 +3,11 @@ import './Details.css';
 import Header from '../../common/header/Header.js';
 
 import Grid from '@material-ui/core/Grid';
-import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
 import 'font-awesome/css/font-awesome.min.css';
 import Divider from '@material-ui/core/Divider';
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'font-awesome/css/font-awesome.min.css';
 // import '@fortawesome/fontawesome-free-solid';
 // import '@fortawesome/fontawesome-svg-core';
@@ -20,9 +17,7 @@ import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
 import CardActions from '@material-ui/core/CardActions';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
@@ -195,7 +190,7 @@ class Details extends Component{
     }
 
     render() {
-        const {classes} = this.props;
+        //const {classes} = this.props;
         return(
             <div>
                 {/* Header section */}
