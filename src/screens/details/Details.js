@@ -4,11 +4,12 @@ import Header from '../../common/header/Header.js';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import 'font-awesome/css/font-awesome.min.css';
+// import 'font-awesome/css/font-awesome.min.css';
 import Divider from '@material-ui/core/Divider';
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
-import 'font-awesome/css/font-awesome.min.css';
+import '../assets/font-awesome-4.7.0/css/font-awesome.min.css';
+import '../assets/font-awesome-4.7.0/css/font-awesome.css';
 // import '@fortawesome/fontawesome-free-solid';
 // import '@fortawesome/fontawesome-svg-core';
 // // import '@fortawesome/fontawesome-free-regular';
