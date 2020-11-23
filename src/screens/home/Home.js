@@ -1,141 +1,126 @@
-// //Sample HomePage 
+import React, {Component} from "react";
+import HomeResCard from "../../common/home/HomeResCard";
+import './Home.css'
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Header from "../../common/header/Header";
+import "../../../node_modules/font-awesome/css/font-awesome.css";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-// import React, {Component} from 'react';
-// //import './Home.css';
-// import Header from '../../common/header/Header';
-
-// class Home extends Component{
-//     render(){
-//         return(
-//             <div>
-//                 <Header showSearchBox={true} baseUrl={this.props.baseUrl}/>
-//             </div>
-//         )    
-//     }
-// }
-
-// export default Home;
-
-import React, { Component } from 'react';
-import Header from '../../common/header/Header';
-//import { Route, Link } from 'react-router-dom';
-import * as Utils from "../../common/Utils/Utils";
-// import * as Constants from "../../common/Constants";
-import RestaurantCard from '../card/RestaurantCard.js';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from "@material-ui/core/styles";
-import './Home.css';
-
-
-const styles = {
-    resCard: { width: "90%", cursor: "pointer" }
+// Constants for varying screen size
+const withMediaQuery = () => Component => props => {
+    const isXtraSmallScreen = useMediaQuery('(max-width:650px)');
+    const isSmallScreen = useMediaQuery('(max-width:1000px)');
+    const isMediumScreen = useMediaQuery('(max-width:1350px)');
+    return <Component isSmallScreen={isSmallScreen} isMediumScreen={isMediumScreen}
+                      isXtraSmallScreen={isXtraSmallScreen} {...props} />;
 };
 
+// Home page rendering
 class Home extends Component {
 
     constructor() {
         super();
         this.state = {
-            imageData: [],
-            data: []
+            restaurants: [],
+            loading: false
         }
+        this.handleRestaurantNavigation = this.handleRestaurantNavigation.bind(this);
     }
 
+    handleRestaurantNavigation = (restaurantId) => this.restaurantDetails(restaurantId);
+
+    //
     componentDidMount() {
-        this.getAllImageData();
-    }
-
-    // Get all restuarants data
-    getAllImageData = () => {
-        const requestUrl = this.props.baseUrl + "restaurant";
-        const that = this;
-        Utils.makeApiCall(
-            requestUrl,
-            null,
-            null,
-            'GET',
-            null,
-            responseText => {
-                that.setState(
-                    {
-                        imageData: JSON.parse(responseText).restaurants
-                    }
-                );
-            },
-            () => { }
-        );
-    };
-
-    //Logout action from drop down menu on profile icon
-    loginredirect = () => {
-        sessionStorage.clear();
-        this.props.history.push({
-            pathname: "/"
-        });
-        window.location.reload();
-    }
-
-    // Restaurant search by name
-    searchHandler = (event) => {
-        let that = this;
-        let dataRestaurants = null;
-        let xhrRestaurants = new XMLHttpRequest();
-        xhrRestaurants.addEventListener('readystatechange', function () {
-            if (this.readyState === 4) {
-                if (!JSON.parse(this.responseText).restaurants) {
-                    that.setState({
-                        imageData: null,
-                    })
-                } else {
-                    that.setState({
-                        imageData: JSON.parse(this.responseText).restaurants,
-                    })
-                }
-            }
-        })
-        //console.log(this.props.baseUrl)
-        if (event.target.value === '') {
-            xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant`);
-        } else {
-           //console.log(`${this.props.baseUrl}restaurant/name/${event.target.value}`);
-            xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant/name/${event.target.value}`);
-        }
-        xhrRestaurants.send(dataRestaurants);
+        this.mounted = true;
+        this.getRestaurants();
     }
 
     render() {
-        const { classes } = this.props;
         return (
             <div>
-                <Header logoutHandler={this.loginredirect} baseUrl={this.props.baseUrl} searchHandler={this.searchHandler} showSearchBox={true} history={this.props.history} />
-                <div className="mainContainer">
-                    {
-                        this.state.imageData === null ? <span style={{ fontSize: "20px" }}>No restaurant with the given name</span>
-                            : (
-                                (this.state.imageData || []).map((resItem, index) =>
-                                    <div key={"div" + index} className="restaurantCard">
-                                        <Grid className="gridCard" key={index}>
-                                            <RestaurantCard
-                                                resId={resItem.id}
-                                                resURL={resItem.photo_URL}
-                                                resName={resItem.restaurant_name}
-                                                resFoodCategories={resItem.categories}
-                                                resCustRating={resItem.customer_rating}
-                                                resNumberCustRated={resItem.number_customers_rated}
-                                                avgPrice={resItem.average_price}
-                                                classes={classes}
-                                                index={index}
-                                            />
-                                        </Grid>
-                                    </div>
-                                )
-                            )
-                    }
-                </div>
-
+                {/* Render components only after mounted is true */}
+                {this.mounted === true ?
+                    <div>
+                        {/* Render Header component */}
+                        <Header searchHandler={this.searchHandler} showSearch={true}/>
+                        {this.state.loading === true ?
+                            <Typography className="loading-spinner" variant="h4"
+                                        color="textSecondary">loading...</Typography>
+                            : ""
+                        }
+                        <div className={this.state.restaurants.length === 0 ? "noRestaurantMsg" : "card-container"}>
+                            {
+                                this.state.restaurants.length === 0 && this.state.loading !== true ?
+                                    <Typography variant="h6">
+                                        No restaurant with the given name.
+                                    </Typography>
+                                    :
+                                    this.state.restaurants.map(restaurant => (
+                                        <Box key={restaurant.id}
+                                             className={this.props.isXtraSmallScreen ? "card-mainXSM" :
+                                                 (this.props.isSmallScreen ? "card-mainSM" :
+                                                     (this.props.isMediumScreen ? "card-mainM" : "card-main"))}>
+                                            {/* Render Restaurant cards components */}
+                                            <HomeResCard restaurant={restaurant}
+                                                       handleRestaurantNavigation={this.handleRestaurantNavigation}/>
+                                        </Box>
+                                    ))}
+                        </div>
+                    </div>
+                    : ""}
             </div>
-        )
+        );
+    }
+
+    // Fetches the restaurants from backend
+    getRestaurants = () => {
+        const headers = {'Accept': 'application/json'}
+        let that = this;
+        let url = "http://localhost:8080/api/restaurant";
+        that.setState({loading: true})
+        return fetch(url,
+            {method: 'GET', headers}
+        ).then((response) => {
+            return response.json();
+        }).then((jsonResponse) => {
+            that.setState({
+                restaurants: jsonResponse.restaurants,
+                loading: false
+            })
+        }).catch((error) => {
+            console.log('error user data', error);
+        });
+    }
+
+    // Navigate to Restaurant Details page along with restaurantID clicked
+    restaurantDetails = (restaurantId) => {
+        this.props.history.push("/restaurant/" + restaurantId);
+    }
+
+    // Function to search for Restaurant
+    searchHandler = (event) => {
+        let that = this;
+        const headers = {'Accept': 'application/json'}
+        let url = 'http://localhost:8080/api/restaurant/name/' + event.target.value;
+        that.setState({loading: true})
+        if (event.target.value === "") {
+            this.getRestaurants();
+        } else {
+            return fetch(url,
+                {method: 'GET', headers}
+            ).then((response) => {
+                return response.json();
+            }).then((jsonResponse) => {
+                this.setState({
+                    restaurants: jsonResponse.restaurants,
+                    loading: false
+                })
+            }).catch((error) => {
+                console.log('error user data', error);
+            });
+        }
     }
 }
 
-export default withStyles(styles)(Home);
+export default (withMediaQuery()(Home));

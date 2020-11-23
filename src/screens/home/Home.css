@@ -1,33 +1,59 @@
-.cardClass{
-    max-width: 345px;
-}
-.cardMediaClass{
-    height: 140px;
-}
-
-.mainContainer{
+.card-container {
     display: flex;
     flex-wrap: wrap;
-    margin-left: 1%;
-    margin-top: 3%;
- }
- 
- .restaurantCard {
-    display:inline-block;
-    width:25%;
-    height:100%;
-    padding-bottom: 2%;
- }
- 
- @media (max-width: 1200px){
-    .restaurantCard {
-       display:inline-block;
-       flex-grow: 1;
-       width:49%;
-    }
- }
- 
- .gridCard{
-    height:100% !important;
-    width:100%;
- }
+    margin: 30px auto;
+    justify-content: flex-start;
+}
+
+.card-main {
+    width: 22%;
+    margin: 10px;
+}
+
+.card-mainM {
+    width: 30%;
+    margin: 10px;
+}
+
+.card-mainSM {
+    width: 45%;
+    margin: 10px;
+}
+
+.card-mainXSM {
+    width: 100%;
+    margin: 10px;
+}
+
+.noRestaurantMsg {
+    justify-content: start !important;
+}
+
+.restaurant-card,
+.restaurant-card-main {
+    max-width: 300px !important;
+    /*height: 340px ;*/
+    margin: auto;
+}
+
+.card-section2 {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 16px 16px 16px !important;
+}
+
+.card-rating {
+    background: #eacc5d;
+    padding: 5px 15px;
+    color: white;
+}
+
+.card-price {
+    padding: 5px;
+}
+
+.loading-spinner {
+    top: 50%;
+    position: absolute;
+    left: 45%;
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Controller from './Controller';
-import 'typeface-roboto';
+// import 'typeface-roboto';
 import {BrowserRouter as Router} from "react-router-dom";
 import * as serviceWorker from './serviceWorker';
 
