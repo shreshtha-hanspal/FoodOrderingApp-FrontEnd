@@ -93,11 +93,11 @@ class Home extends Component {
                 }
             }
         })
-        console.log(this.props.baseUrl)
+        //console.log(this.props.baseUrl)
         if (event.target.value === '') {
             xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant`);
         } else {
-           console.log(`${this.props.baseUrl}restaurant/name/${event.target.value}`);
+           //console.log(`${this.props.baseUrl}restaurant/name/${event.target.value}`);
             xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant/name/${event.target.value}`);
         }
         xhrRestaurants.send(dataRestaurants);
