@@ -129,7 +129,7 @@ class Details extends Component{
                 cartItems: this.state.cartItemsList,
                 totalPrice: this.state.cartTotalPrice
             };
-
+            sessionStorage.setItem('customer-cart',checkoutCart);
             this.props.history.push({
                 pathname: "/checkout",
                 checkoutCart: checkoutCart
