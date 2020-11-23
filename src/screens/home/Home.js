@@ -76,38 +76,38 @@ class Home extends Component {
     }
 
     // Restaurant search by name
-    searchRestaurantsByName = event => {
-        console.log('inside event')
-        let loginData = null;
-        const searchValue = event.target.value;
-        const requestUrl = this.props.baseUrl + "restaurant/name/" + searchValue;
-        const that = this;
-        let xhrLogin = new XMLHttpRequest();
-        xhrLogin.addEventListener("readystatechange", function () {
+    searchHandler = (event) => {
+        let that = this;
+        let dataRestaurants = null;
+        let xhrRestaurants = new XMLHttpRequest();
+        xhrRestaurants.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
-                if (this.status === 200) {
-                    that.setState(
-                        {
-                            imageData: JSON.parse(this.responseText).restaurants
-                        }
-                    );
+                if (!JSON.parse(this.responseText).restaurants) {
+                    that.setState({
+                        imageData: null,
+                    })
+                } else {
+                    that.setState({
+                        imageData: JSON.parse(this.responseText).restaurants,
+                    })
                 }
             }
-        });
-        let url = requestUrl;
-        xhrLogin.open("GET", url);
-        //xhrLogin.setRequestHeader("authorization", "Basic " + window.btoa(this.state.loginContactNo + ":" + this.state.loginPassword));
-        xhrLogin.setRequestHeader("Content-Type", "application/json");
-        xhrLogin.setRequestHeader("Cache-Control", "no-cache");
-        xhrLogin.setRequestHeader("Access-Control-Allow-Origin", "*");
-        xhrLogin.send(loginData);
-    };
+        })
+        console.log(this.props.baseUrl)
+        if (event.target.value === '') {
+            xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant`);
+        } else {
+           console.log(`${this.props.baseUrl}restaurant/name/${event.target.value}`);
+            xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant/name/${event.target.value}`);
+        }
+        xhrRestaurants.send(dataRestaurants);
+    }
 
     render() {
         const { classes } = this.props;
         return (
             <div>
-                <Header logoutHandler={this.loginredirect} baseUrl={this.props.baseUrl} searchRestaurantsByName={this.searchRestaurantsByName} showSearchBox={true} history={this.props.history} />
+                <Header logoutHandler={this.loginredirect} baseUrl={this.props.baseUrl} searchHandler={this.searchHandler} showSearchBox={true} history={this.props.history} />
                 <div className="mainContainer">
                     {
                         this.state.imageData === null ? <span style={{ fontSize: "20px" }}>No restaurant with the given name</span>
