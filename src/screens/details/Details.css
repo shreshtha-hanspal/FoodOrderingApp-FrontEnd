@@ -17,7 +17,7 @@
 .menu-cart-section {
     display: flex;
     flex-direction: row;
-    width: '100%';
+    width: 100%;
 }
 
 .menu {
@@ -25,7 +25,7 @@
 }
 
 .cart {
-    width: 40%;
+    width: 50%;
 }
 
  .space-for-cart {
@@ -199,4 +199,10 @@
     width: '60px';
     height: '50px';
     margin-left: '-20px';
+}
+
+.category-cart-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
