@@ -498,7 +498,7 @@ class Checkout extends Component {
 
                                                     {tabValue === 0 &&
                                                     <TabContainer className={classes.existingAddressTab}>
-                                                        {this.state.customerExistingAddresses === null ?
+                                                        {this.state.customerExistingAddresses.length === 0 ?
                                                             <Typography variant='h6' color='textSecondary'>
                                                                 There are no saved addresses! You can save an address
                                                                 using the 'New Address' tab or using your 'Profile' menu
