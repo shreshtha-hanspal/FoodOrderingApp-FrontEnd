@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './Checkout.css';
-import { withStyles } from '@material-ui/core/styles';
+// import 'bootstrap/dist/css/bootstrap.css';
+import {withStyles} from '@material-ui/core/styles';
 import Header from '../../common/header/Header';
 import Grid from '@material-ui/core/Grid';
 import Stepper from '@material-ui/core/Stepper';
@@ -34,23 +35,26 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
-
 const styles = theme => ({
+
     stepperButton: {
-        marginTop: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginTop: theme.spacing(2),
+        marginRight: theme.spacing(2),
     },
-    actionsContainer: {
-        marginBottom: theme.spacing.unit * 2,
+    mainContainer: {
+        marginBottom: theme.spacing(2) * 2,
+    },
+    summaryCard: {
+        paddingRight: theme.spacing(2) * 2,
     },
     resetContainer: {
-        padding: theme.spacing.unit * 3,
+        padding: theme.spacing(2) * 3,
     },
     tabRoot: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
     },
-    existingAddressTabContainer: {
+    existingAddressTab: {
         float: 'left',
         display: 'flex',
         flexWrap: 'wrap',
@@ -67,10 +71,10 @@ const styles = theme => ({
         marginBottom: '50px',
         cursor: 'pointer',
     },
-    existingAddressGridListTileTile: {
+    existingAddressGridListTile2: {
         padding: '25px',
     },
-    existingAddressCheckCircle: {
+    existingAddressCircle: {
         float: 'right',
         marginRight: '10px',
     },
@@ -81,27 +85,34 @@ const styles = theme => ({
         display: 'flex',
     },
     radioFormControl: {
-        margin: theme.spacing.unit * 3,
+        margin: theme.spacing(2) * 3,
     },
     radioGroup: {
-        margin: `${theme.spacing.unit}px 0`,
+        margin: `${theme.spacing(2)}px 0`,
     },
     summaryCardDivider: {
         marginTop: '5px',
     },
-    netAmount: {
-        marginTop: '15px',
+    paddingLeft2per: {
+        paddingLeft: theme.spacing(2)
+    },
+    padding2PerRight:{
+        paddingRight: theme.spacing(0)
     },
     placeOrderButton: {
         marginTop: '20px',
+        marginRight: '20px',
+    },
+    greyColor: {
+        color: 'grey',
     },
 });
 
 const MenuProps = {
     PaperProps: {
         style: {
-            maxHeight: 48 * 4 + 8,
-            width: 250,
+            maxHeight: 50 * 4 + 8,
+            width: 300,
         },
     },
 };
@@ -112,7 +123,7 @@ function getSteps() {
 
 function TabContainer(props) {
     return (
-        <Typography component='div' style={{ padding: 8 * 3 }}>
+        <Typography component='div' style={{padding: 8 * 3}}>
             {props.children}
         </Typography>
     )
@@ -123,11 +134,10 @@ TabContainer.propTypes = {
 };
 
 class Checkout extends Component {
-
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            customerCart: JSON.parse(sessionStorage.getItem('customer-cart')),
+            customerCart: {},
             activeStep: 0,
             tabValue: 0,
             selectedExistingAddress: null,
@@ -150,6 +160,9 @@ class Checkout extends Component {
             openPlaceOrderMsg: false,
             orderId: '',
             placeOrderMsg: '',
+            couponName: "",
+            couponNameRequired: "dispNone",
+            couponNameHelpText: "dispNone",
         }
     };
 
@@ -157,84 +170,98 @@ class Checkout extends Component {
         activeStep: 0,
     };
 
-    componentWillMount() {
-        let that = this;
+    UNSAFE_componentWillMount() {
+        if(sessionStorage.getItem('access-token') !== null && this.props.location.checkoutCart !== undefined){
+        this.setState({
+            customerCart: this.props.location.checkoutCart
+        });
+        let self = this;
 
-        // Customers' existing address
+        //customer addresses requests
         let dataCustomerAddress = null;
         let xhrCustomerAddress = new XMLHttpRequest();
         xhrCustomerAddress.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
-                that.setState({
-                    customerExistingAddresses: JSON.parse(this.responseText).addresses,
+                self.setState({
+                    customerExistingAddresses: JSON.parse(this.responseText).addresses
                 });
             }
         });
-        xhrCustomerAddress.open('GET', `${this.props.baseUrl}address/customer`);
+        xhrCustomerAddress.open('GET', `${this.props.baseUrl}/address/customer`);
         xhrCustomerAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrCustomerAddress.send(dataCustomerAddress);
 
-        // States
+        //states requests
         let dataStates = null;
         let xhrStates = new XMLHttpRequest();
-        xhrStates.addEventListener('readystatechange', function () {
+        xhrStates.addEventListener("readystatechange", function () {
             if (this.readyState === 4) {
-                that.setState({
-                    states: JSON.parse(this.responseText).states,
-                });
+                self.setState({states: JSON.parse(this.responseText).states});
             }
         });
-        xhrStates.open('GET', `${this.props.baseUrl}states`);
+        xhrStates.open('GET', `${this.props.baseUrl}/states`);
         xhrStates.send(dataStates);
 
-        // Request Payment Modes
+
+        // payment modes request
         let dataPaymentModes = null;
         let xhrPaymentModes = new XMLHttpRequest();
         xhrPaymentModes.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
-                that.setState({
-                    paymentModes: JSON.parse(this.responseText).paymentMethods,
+                self.setState({
+                    paymentModes: JSON.parse(this.responseText).paymentMethods
                 });
             }
         });
-        xhrPaymentModes.open('GET', `${this.props.baseUrl}payment`);
+        xhrPaymentModes.open('GET', `${this.props.baseUrl}/payment`);
         xhrPaymentModes.send(dataPaymentModes);
+    }else{
+        this.props.history.push("/");
+    }
     };
 
+
     componentWillUnmount() {
-        sessionStorage.removeItem('customer-cart');
+
     }
 
+    componentDidMount() {
+
+    }
+
+    //Change the handler for Next click
     stepperNextHandler = () => {
-        // Checking if address not selected
+        let self = this;
+
         if (this.state.activeStep === 0 && this.state.selectedExistingAddress === null) {
             return;
         }
-
-        // Checking if payment mode not selected
         if (this.state.activeStep === 1 && this.state.selectedPaymentMode === null) {
             return;
         }
 
-        this.setState(preState => ({
+        self.setState(preState => ({
             activeStep: preState.activeStep + 1,
         }));
     };
 
+    //Change the handler for Back click
     stepperBackHandler = () => {
         this.setState(preState => ({
             activeStep: preState.activeStep - 1,
         }));
     };
 
+    //Steps reset
     stepperResetHandler = () => {
         this.setState({
             activeStep: 0,
         });
     };
 
+    //Tabs change
     tabChangeHandler = (event, value) => {
-        this.setState({ tabValue: value });
+        this.setState({tabValue: value});
     };
 
     existingAddressOnClickHandler = (addressId) => {
@@ -245,73 +272,81 @@ class Checkout extends Component {
         });
     };
 
+    //Flat change handler
     flatBuildingNoChangeHandler = event => {
-        this.setState({ flatBuildingNo: event.target.value });
+        this.setState({flatBuildingNo: event.target.value});
     };
 
+    //Localoty change handler
     localityChangeHandler = event => {
-        this.setState({ locality: event.target.value });
+        this.setState({locality: event.target.value});
     };
 
+    //City change handler
     cityChangeHandler = event => {
-        this.setState({ city: event.target.value });
+        this.setState({city: event.target.value});
     };
 
+    //State change handler
     stateChangeHandler = event => {
-        this.setState({ newAddressState: event.target.value });
+        this.setState({newAddressState: event.target.value});
     };
 
+    //Pincode change handler
     pincodeChangeHandler = event => {
-        this.setState({ pincode: event.target.value });
+        this.setState({pincode: event.target.value});
     };
 
+    //On click of save function
     saveAddressOnClickHandler = () => {
+        let self = this;
+
         let flatBuildingNoReq = false;
         if (this.state.flatBuildingNo === '') {
-            this.setState({ flatBuildingNoRequired: 'display-block' });
+            self.setState({flatBuildingNoRequired: 'display-block'});
             flatBuildingNoReq = true;
         } else {
-            this.setState({ flatBuildingNoRequired: 'display-none' });
+            self.setState({flatBuildingNoRequired: 'display-none'});
         }
 
         let localityReq = false;
         if (this.state.locality === '') {
-            this.setState({ localityRequired: 'display-block' });
+            self.setState({localityRequired: 'display-block'});
             localityReq = true;
         } else {
-            this.setState({ localityRequired: 'display-none' });
+            self.setState({localityRequired: 'display-none'});
         }
 
         let cityReq = false;
         if (this.state.city === '') {
-            this.setState({ cityRequired: 'display-block' });
+            self.setState({cityRequired: 'display-block'});
             cityReq = true;
         } else {
-            this.setState({ cityRequired: 'display-none' });
+            self.setState({cityRequired: 'display-none'});
         }
 
         let stateReq = false;
         if (this.state.newAddressState === '') {
-            this.setState({ stateRequired: 'display-block' });
+            self.setState({stateRequired: 'display-block'});
             stateReq = true;
         } else {
-            this.setState({ stateRequired: 'display-none' });
+            self.setState({stateRequired: 'display-none'});
         }
 
         let pincodeReq = false;
         if (this.state.pincode === '') {
-            this.setState({
+            self.setState({
                 pincodeRequired: 'display-block',
                 pincodeRequiredMsg: 'required'
             });
             pincodeReq = true;
         } else {
-            this.setState({ pincodeRequired: 'display-none' });
+            self.setState({pincodeRequired: 'display-none'});
         }
 
         let validatePincode = new RegExp('^[1-9][0-9]{5}$');
         if (pincodeReq === false && validatePincode.test(this.state.pincode) === false) {
-            this.setState({
+            self.setState({
                 pincodeRequired: 'display-block',
                 pincodeRequiredMsg: 'Pincode must contain only numbers and must be 6 digits long'
             });
@@ -329,8 +364,7 @@ class Checkout extends Component {
             }
         }
 
-        // Adding Address
-        let that = this;
+
         let dataNewAddress = {
             'city': this.state.city,
             'flat_building_name': this.state.flatBuildingNo,
@@ -345,46 +379,52 @@ class Checkout extends Component {
                 let xhrCustomerAddress = new XMLHttpRequest();
                 xhrCustomerAddress.addEventListener('readystatechange', function () {
                     if (this.readyState === 4) {
-                        that.setState({
+                        self.setState({
                             customerExistingAddresses: JSON.parse(this.responseText).addresses,
                         });
                     }
                 });
-                xhrCustomerAddress.open('GET', `${that.props.baseUrl}address/customer`);
+                xhrCustomerAddress.open('GET', `${self.props.baseUrl}/address/customer`);
                 xhrCustomerAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
                 xhrCustomerAddress.send(dataCustomerAddress);
                 window.alert('New address added!');
             }
         });
-        xhrNewAddress.open('POST', `${this.props.baseUrl}address`);
+        xhrNewAddress.open('POST', `${self.props.baseUrl}/address`);
         xhrNewAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrNewAddress.setRequestHeader('Content-Type', 'application/json');
         xhrNewAddress.send(JSON.stringify(dataNewAddress));
     };
 
+    //Radio button changed
     radioChangeHandler = event => {
-        this.setState({ radioValue: event.target.value });
+        this.setState({radioValue: event.target.value});
     };
 
+    //Radio button handler
     radioClickHandler = (paymentId) => {
-        this.setState({ selectedPaymentMode: paymentId });
+        this.setState({selectedPaymentMode: paymentId});
     };
 
+    //On click of order button
     placeOrderOnClickHandler = () => {
-        let that = this;
+
+        let self = this;
+
         let itemQuantities = this.state.customerCart.cartItems.map(
             function (i) {
                 return {
-                    'item_id': i.id,
-                    'price': i.totalItemPrice,
-                    'quantity': i.count
+                    'item_id': i.item.id,
+                    'price': i.item.price * i.quantity,
+                    'quantity': i.quantity
                 }
             }
         );
+
         let dataPlaceOrder = {
             'address_id': this.state.selectedExistingAddress,
-            'bill': 0,
-            'coupon_id': '',
+            'bill': this.state.customerCart.totalPrice,
+            'coupon_id': '2ddf6284-ecd0-11e8-8eb2-f2801f1b9fd1',
             'discount': 0,
             'item_quantities': itemQuantities,
             'payment_id': this.state.selectedPaymentMode,
@@ -395,13 +435,13 @@ class Checkout extends Component {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
                 if (responseText.status === 'ORDER SUCCESSFULLY PLACED') {
-                    that.setState({
+                    self.setState({
                         openPlaceOrderMsg: true,
                         orderId: responseText.id,
                         placeOrderMsg: `Order placed successfully! Your order ID is ${responseText.id}.`
                     });
                 } else {
-                    that.setState({
+                    self.setState({
                         openPlaceOrderMsg: true,
                         orderId: '',
                         placeOrderMsg: 'Unable to place your order! Please try again!'
@@ -409,32 +449,37 @@ class Checkout extends Component {
                 }
             }
         })
-        xhrPlaceOrder.open('POST', `${this.props.baseUrl}order`);
+        xhrPlaceOrder.open('POST', `${this.props.baseUrl}/order`);
         xhrPlaceOrder.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrPlaceOrder.setRequestHeader('Content-Type', 'application/json');
         xhrPlaceOrder.send(JSON.stringify(dataPlaceOrder));
     };
 
+    //Close and place order
     placeOrderMsgOnCloseHandler = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
 
-        this.setState({ openPlaceOrderMsg: false });
+        this.setState({openPlaceOrderMsg: false});
     };
 
+    //Nagigate to Profile Page
+    clickProfileHandler = () => {
+        this.props.history.push("/profile");
+    }
+
     render() {
-        const { classes } = this.props;
+        const {classes} = this.props;
         const steps = getSteps();
-        const { activeStep } = this.state;
-        const { tabValue } = this.state;
+        const {activeStep} = this.state;
+        const {tabValue} = this.state;
 
-        return (
+        return sessionStorage.getItem('access-token') !== null && this.props.location.checkoutCart !== undefined ? (
             <div>
-                <Header />
-
-                <Grid container={true} >
-                    <Grid item={true} xs={9}>
+                <Header clickProfile={this.clickProfileHandler} />
+                <Grid container={true}>
+                    <Grid item={true} xs={8}>
                         <div>
                             <Stepper activeStep={activeStep} orientation='vertical'>
                                 {steps.map((label, index) => (
@@ -442,39 +487,36 @@ class Checkout extends Component {
                                         <StepLabel>{label}</StepLabel>
                                         <StepContent>
                                             {index === 0 ?
-
-                                                // Tabs for existing and New Address
                                                 <div className={classes.tabRoot}>
                                                     <AppBar position='static'>
                                                         <Tabs value={tabValue} onChange={this.tabChangeHandler}>
-                                                            <Tab label='EXISTING ADDRESS' />
-                                                            <Tab label='NEW ADDRESS' />
+                                                            <Tab label='EXISTING ADDRESS'/>
+                                                            <Tab label='NEW ADDRESS'/>
                                                         </Tabs>
                                                     </AppBar>
 
-                                                    {/* Existing Address */}
+
                                                     {tabValue === 0 &&
-                                                    <TabContainer className={classes.existingAddressTabContainer}>
-                                                        {this.state.customerExistingAddresses === null ?
+                                                    <TabContainer className={classes.existingAddressTab}>
+                                                        {this.state.customerExistingAddresses.length === 0 ?
                                                             <Typography variant='h6' color='textSecondary'>
-                                                                There are no saved addresses! You can save an address using the 'New Address' tab or using your 'Profile' menu option.
+                                                                There are no saved addresses! You can save an address
+                                                                using the 'New Address' tab or using your 'Profile' menu
+                                                                option.
                                                             </Typography>
                                                             :
                                                             <GridList
                                                                 className={classes.gridList}
                                                                 cols={3}
-                                                                cellHeight='auto'
-                                                            >
+                                                                cellHeight='auto'>
                                                                 {this.state.customerExistingAddresses.map(address => (
                                                                     <GridListTile
                                                                         key={'address' + address.id}
                                                                         id={this.state[address.id] || 'unselect-address'}
                                                                         onClick={() => this.existingAddressOnClickHandler(address.id)}
                                                                         className={classes.existingAddressGridListTile}
-                                                                        classes={{ tile: classes.existingAddressGridListTileTile }}
-                                                                    >
+                                                                        classes={{tile: classes.existingAddressGridListTile2}}>
 
-                                                                        {/* Existing Address  -  Details*/}
                                                                         <Typography variant='subtitle1'>
                                                                             {address.flat_building_name}
                                                                         </Typography>
@@ -495,11 +537,12 @@ class Checkout extends Component {
                                                                             {address.pincode}
                                                                         </Typography>
 
-                                                                        {/* Check Existing address */}
-                                                                        <CheckCircleIcon
-                                                                            className={classes.existingAddressCheckCircle}
-                                                                            nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
-                                                                        />
+                                                                        <div
+                                                                            style={{color: this.state[address.id] === 'select-address' ? 'green' : 'grey'}}>
+                                                                            <CheckCircleIcon
+                                                                                className={classes.existingAddressCircle}/>
+                                                                        </div>
+
 
                                                                     </GridListTile>
                                                                 ))}
@@ -508,13 +551,12 @@ class Checkout extends Component {
                                                     </TabContainer>
                                                     }
 
-                                                    {/* New Address */}
+
                                                     {tabValue === 1 &&
                                                     <TabContainer>
-
-                                                        {/* New address - Details */}
                                                         <FormControl required>
-                                                            <InputLabel htmlFor='flatBuildingNo'>Flat / Building No.</InputLabel>
+                                                            <InputLabel htmlFor='flatBuildingNo'>Flat / Building
+                                                                No.</InputLabel>
                                                             <Input
                                                                 id='flatBuildingNo'
                                                                 type='text'
@@ -522,11 +564,13 @@ class Checkout extends Component {
                                                                 value={this.state.flatBuildingNo}
                                                                 onChange={this.flatBuildingNoChangeHandler}
                                                             />
-                                                            <FormHelperText className={this.state.flatBuildingNoRequired} error={true}>
+                                                            <FormHelperText
+                                                                className={this.state.flatBuildingNoRequired}
+                                                                error={true}>
                                                                 <span>required</span>
                                                             </FormHelperText>
                                                         </FormControl>
-                                                        <br /><br />
+                                                        <br/><br/>
 
                                                         <FormControl required>
                                                             <InputLabel htmlFor='locality'>Locality</InputLabel>
@@ -535,13 +579,13 @@ class Checkout extends Component {
                                                                 type='text'
                                                                 locality={this.state.locality}
                                                                 value={this.state.locality}
-                                                                onChange={this.localityChangeHandler}
-                                                            />
-                                                            <FormHelperText className={this.state.localityRequired} error={true}>
+                                                                onChange={this.localityChangeHandler}/>
+                                                            <FormHelperText className={this.state.localityRequired}
+                                                                            error={true}>
                                                                 <span>required</span>
                                                             </FormHelperText>
                                                         </FormControl>
-                                                        <br /><br />
+                                                        <br/><br/>
 
                                                         <FormControl required>
                                                             <InputLabel htmlFor='city'>City</InputLabel>
@@ -550,13 +594,13 @@ class Checkout extends Component {
                                                                 type='text'
                                                                 city={this.state.city}
                                                                 value={this.state.city}
-                                                                onChange={this.cityChangeHandler}
-                                                            />
-                                                            <FormHelperText className={this.state.cityRequired} error={true}>
+                                                                onChange={this.cityChangeHandler}/>
+                                                            <FormHelperText className={this.state.cityRequired}
+                                                                            error={true}>
                                                                 <span>required</span>
                                                             </FormHelperText>
                                                         </FormControl>
-                                                        <br /><br />
+                                                        <br/><br/>
 
                                                         <FormControl required className={classes.newAddressFormControl}>
                                                             <InputLabel htmlFor='newAddressstate'>State</InputLabel>
@@ -566,19 +610,20 @@ class Checkout extends Component {
                                                                 value={this.state.newAddressState}
                                                                 onChange={this.stateChangeHandler}
                                                                 className={classes.newAddressStateSelect}
-                                                                MenuProps={MenuProps}
-                                                            >
+                                                                MenuProps={MenuProps}>
                                                                 {this.state.states.map(state => (
-                                                                    <MenuItem key={'state' + state.id} value={state.state_name}>
+                                                                    <MenuItem key={'state' + state.id}
+                                                                              value={state.state_name}>
                                                                         {state.state_name}
                                                                     </MenuItem>
                                                                 ))}
                                                             </Select>
-                                                            <FormHelperText className={this.state.stateRequired} error={true}>
+                                                            <FormHelperText className={this.state.stateRequired}
+                                                                            error={true}>
                                                                 <span>required</span>
                                                             </FormHelperText>
                                                         </FormControl>
-                                                        <br /><br />
+                                                        <br/><br/>
 
                                                         <FormControl required>
                                                             <InputLabel htmlFor='pincode'>Pincode</InputLabel>
@@ -587,19 +632,18 @@ class Checkout extends Component {
                                                                 type='text'
                                                                 pincode={this.state.pincode}
                                                                 value={this.state.pincode}
-                                                                onChange={this.pincodeChangeHandler}
-                                                            />
-                                                            <FormHelperText className={this.state.pincodeRequired} error={true}>
+                                                                onChange={this.pincodeChangeHandler}/>
+                                                            <FormHelperText className={this.state.pincodeRequired}
+                                                                            error={true}>
                                                                 <span>{this.state.pincodeRequiredMsg}</span>
                                                             </FormHelperText>
                                                         </FormControl>
-                                                        <br /><br />
+                                                        <br/><br/>
 
                                                         <Button
                                                             variant='contained'
                                                             color='secondary'
-                                                            onClick={this.saveAddressOnClickHandler}
-                                                        >
+                                                            onClick={this.saveAddressOnClickHandler}>
                                                             Save Address
                                                         </Button>
                                                     </TabContainer>
@@ -610,7 +654,8 @@ class Checkout extends Component {
 
                                             {index === 1 ?
                                                 <div className={classes.radioRoot}>
-                                                    <FormControl component='fieldset' className={classes.radioFormControl}>
+                                                    <FormControl component='fieldset'
+                                                                 className={classes.radioFormControl}>
                                                         <FormLabel component='legend'>Select Mode of Payment</FormLabel>
                                                         <RadioGroup
                                                             aria-label='paymentModes'
@@ -623,7 +668,7 @@ class Checkout extends Component {
                                                                 <FormControlLabel
                                                                     key={'paymentMode' + paymentMode.id}
                                                                     value={paymentMode.payment_name.toLowerCase()}
-                                                                    control={<Radio />}
+                                                                    control={<Radio/>}
                                                                     label={paymentMode.payment_name}
                                                                     onClick={() => this.radioClickHandler(paymentMode.id)}
                                                                 />
@@ -634,8 +679,8 @@ class Checkout extends Component {
                                                 : ''
                                             }
 
-                                            {/* Buttons for Step */}
-                                            <div className={classes.actionsContainer}>
+
+                                            <div className={classes.mainContainer}>
                                                 <div>
                                                     <Button
                                                         disabled={activeStep === 0}
@@ -671,58 +716,60 @@ class Checkout extends Component {
                         </div>
                     </Grid>
 
-                    {/* Cart Summary */}
-                    <Grid item={true} xs>
+
+                    <Grid item={true} xs className={classes.summaryCard}>
                         <Card id='summary-card'>
                             <CardContent>
-                                <Typography variant='h5'>
-                                    Summary
-                                </Typography>
-                                <br />
+                                <div className='container'>
+                                    <Typography variant='h5'>
+                                        Summary
+                                    </Typography>
+                                    <br/>
+                                    <Typography variant='h6' color='textSecondary' gutterBottom>
+                                        {this.state.customerCart.restaurantDetails.restaurant_name}
+                                    </Typography>
+                                    {this.state.customerCart.cartItems.map(item => (
+                                        <div key={'item' + item.item.id + item.item.item_name}
+                                             className='row w-100 no-gutters'>
+                                            <div className='p-1 col-0'
+                                                 style={{color: item.item.item_type === 'NON_VEG' ? 'red' : 'green'}}>
+                                                <i className='fa fa-stop-circle-o'></i>
+                                            </div>
+                                            <div
+                                                className='p-1 col-6 capital grey-color align-item-md-left'>{item.item.item_name}</div>
+                                            <div
+                                                className='p-1 col-1 grey-color align-item-md-left'>{item.quantity}</div>
+                                            <div className='p-1 col-3 grey-color align-item-md-left'>
+                                                <i className='fa fa-inr'></i>{item.item.price * item.quantity}.00
+                                            </div>
+                                        </div>
+                                    ))}
 
-                                {/* Restaurant Name */}
-                                <Typography variant='h6' color='textSecondary' gutterBottom>
-                                    {this.state.customerCart.restaurantDetails.restaurant_name}
-                                </Typography>
-
-                                {this.state.customerCart.cartItems.map(item => (
-                                    <div key={'item' + item.id + item.category_name} className='flex width-100 pd-1-per'>
-                                        <div className='width-10'><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
-                                        <div className='width-50 capital checkout-grey-color'>{item.item_name}</div>
-                                        <div className='width-25 checkout-grey-color'>{item.count}</div>
-                                        <div className='width-4 checkout-grey-color'><i className='fa fa-inr'></i></div>
-                                        <div className='checkout-grey-color'>{item.totalItemPrice}.00</div>
+                                    <Divider className={classes.summaryCardDivider}/>
+                                    <div className='row w-100 no-gutters'>
+                                        <div className='p-1 col-6'>Net Amount</div>
+                                        <div className='p-1 col-1'></div>
+                                        <div className='p-1 col-1'></div>
+                                        <div className='p-1 col-4'>
+                                            <i className='fa fa-inr grey-color align-items-end'></i>
+                                            {this.state.customerCart.totalPrice}.00
+                                        </div>
                                     </div>
-                                ))}
-
-                                <Divider className={classes.summaryCardDivider} />
-
-                                {/* Net Amount */}
-                                <div className={classes.netAmount}>
-                                    Net Amount
-                                    <span className='right'>
-                                        <span className='width-5 checkout-grey-color'>
-                                            <i className='fa fa-inr'></i>
-                                        </span> {this.state.customerCart.totalPrice}.00
-                                    </span>
+                                    <Button
+                                        variant='contained'
+                                        color='primary'
+                                        className={classes.placeOrderButton}
+                                        fullWidth={true}
+                                        onClick={this.placeOrderOnClickHandler}>
+                                        Place Order
+                                    </Button>
                                 </div>
-
-                                {/* Place Order */}
-                                <Button
-                                    variant='contained'
-                                    color='primary'
-                                    className={classes.placeOrderButton}
-                                    fullWidth={true}
-                                    onClick={this.placeOrderOnClickHandler}
-                                >
-                                    Place Order
-                                </Button>
                             </CardContent>
                         </Card>
                     </Grid>
+
                 </Grid>
 
-                {/* Order Placed */}
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'bottom',
@@ -742,12 +789,12 @@ class Checkout extends Component {
                             color='inherit'
                             onClick={this.placeOrderMsgOnCloseHandler}
                         >
-                            <CloseIcon />
+                            <CloseIcon/>
                         </IconButton>,
                     ]}
                 />
             </div>
-        );
+        ) : "";
     }
 }
 

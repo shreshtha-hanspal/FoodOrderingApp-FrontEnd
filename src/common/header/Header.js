@@ -297,10 +297,12 @@ class Header extends Component {
                         <div id="signup-error-msg-div" className={this.state.signupErrorMessageRequired}><span
                             id="signup-error-msg" className="red">{this.state.signupErrorMessage}</span></div>
                         <br/>
+                        {/* Handler to handle logic on click of signup button */}
                         <Button variant="contained" color="primary" onClick={this.signupClickHandler}>SIGNUP</Button>
                     </TabContainer>
                     }
                 </Modal>
+                {/* SnackBar component when user logs in successfully */}
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'bottom',
@@ -319,6 +321,7 @@ class Header extends Component {
                         </React.Fragment>
                     }
                 />
+                {/* SnackBar when user is registered successfully */}
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'bottom',

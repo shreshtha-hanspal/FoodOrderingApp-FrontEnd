@@ -17,6 +17,7 @@ const RestaurantCard = function(props){
 
     return (
 		<div className="cardContainer" onClick={() => {let detailsPageUrl = '/restaurant/'+ props.resId; return props.history.push(detailsPageUrl)}} key={index}>
+			{/* Restaurant card on HomePage */}
 			<Card style={{width:"95%",height:"95%"}} className={classes.resCard} key={index}>			
 					<CardMedia
 						component="img"

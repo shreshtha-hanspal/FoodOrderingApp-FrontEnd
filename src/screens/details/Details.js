@@ -3,15 +3,13 @@ import './Details.css';
 import Header from '../../common/header/Header.js';
 
 import Grid from '@material-ui/core/Grid';
-import Paper from "@material-ui/core/Paper";
 import Typography from '@material-ui/core/Typography';
-import 'font-awesome/css/font-awesome.min.css';
+// import 'font-awesome/css/font-awesome.min.css';
 import Divider from '@material-ui/core/Divider';
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import 'font-awesome/css/font-awesome.min.css';
+import '../assets/font-awesome-4.7.0/css/font-awesome.min.css';
+import '../assets/font-awesome-4.7.0/css/font-awesome.css';
 // import '@fortawesome/fontawesome-free-solid';
 // import '@fortawesome/fontawesome-svg-core';
 // // import '@fortawesome/fontawesome-free-regular';
@@ -20,10 +18,10 @@ import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
 import CardActions from '@material-ui/core/CardActions';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const styles = theme => ({
@@ -73,6 +71,7 @@ class Details extends Component{
         console.log(id);
     };
 
+    //Takes restaurant ID as parameter and stores details of a restaurant fetched-based-on-ID
     getRestaurantDetails = (id) => {
         let res_url = `${this.props.baseUrl}/restaurant/${id}`;
         console.log(res_url)
@@ -107,7 +106,7 @@ class Details extends Component{
         });
     }
 
-    //checkout handler
+    //checkout handler- Handles logic on click of checkout Button
     checkoutHandler = () => {
         if (this.state.cartItems === 0) {
             this.messageBarHandler("Please add an item to your cart!");
@@ -127,7 +126,7 @@ class Details extends Component{
                 cartItems: this.state.cartItemsList,
                 totalPrice: this.state.cartTotalPrice
             };
-
+            sessionStorage.setItem('customer-cart',checkoutCart);
             this.props.history.push({
                 pathname: "/checkout",
                 checkoutCart: checkoutCart
@@ -135,7 +134,7 @@ class Details extends Component{
         }
     }
 
-    //Add item to My cart
+    //Add an item to My cart
     addItemHandler = (item) => {
         this.messageBarHandler("Item added to cart!");
         let cartItemsList = this.state.cartItemsList;
@@ -160,7 +159,7 @@ class Details extends Component{
         });
     }
 
-    //Add item count to cart
+    //Increase item count in cart
     increaseItemInCartHandler = (cartItem) => {
         this.messageBarHandler("Item quantity increased by 1!");
         let cartItemsList = this.state.cartItemsList;
@@ -192,10 +191,12 @@ class Details extends Component{
     }
 
     render() {
-        const {classes} = this.props;
+        //const {classes} = this.props;
         return(
             <div>
+                {/* Header section */}
                 <Header showSearchBox={false} clickProfileIcon={this.onProfileIconClick} baseUrl={this.props.baseUrl}/>
+                {/* Restaurant details section */}
                 <div className="restaurant-section grey-color-bg">
                     <Grid container direction="row" spacing={0}>
                         <Grid item xs={2}>
@@ -250,20 +251,20 @@ class Details extends Component{
                         </Grid>        
                     </Grid>
                 </div>
-                <div className="menu-cart-section">
-                    <div className='menu'>
-                        <div style={{padding: '3%'}}>
-                            {this.state.categories.map(categoryItem =>
-                                <div key={categoryItem.id}>
-                                    <CategoryItem item={categoryItem} this={this}/>
-                                </div>
-                            )}
+                {/* Details of items based on category in a restaurant */}
+                <div className="category-cart-container">
+                    <div className="menu-cart-section">
+                        <div className='menu'>
+                            <div style={{padding: '3%'}}>
+                                {this.state.categories.map(categoryItem =>
+                                    <div key={categoryItem.id}>
+                                        <CategoryItem item={categoryItem} this={this}/>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* checkout cart code */}
-                <div className="space-for-cart">
-                    </div>
+                    {/* checkout cart code */}
                     <div className="cart">
                         <div className="padding-5percent">
                             <Card className="card" >
@@ -300,6 +301,30 @@ class Details extends Component{
                             </Card>
                         </div>
                     </div>
+                </div>
+                    {/* snack bar component to display messages to user */}
+                    <Snackbar anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                    }}
+                          open={this.state.messagebarOpen}
+                          onClose={(e) => this.messageBarHandler("")}
+                          autoHideDuration={2000}
+                          ContentProps={{
+                              'aria-describedby': 'message-id',
+                          }}
+                          message={<span id="message-id">{this.state.messagebarMessage}</span>}
+                          action={[
+                              <IconButton
+                                  key="close"
+                                  aria-label="Close"
+                                  color="inherit"
+                                  onClick={(e) => this.messageBarHandler("")}
+                              >
+                                  <CloseIcon/>
+                              </IconButton>,
+                          ]}
+                />
             </div>
         )
     }
